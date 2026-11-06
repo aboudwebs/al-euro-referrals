@@ -1,32 +1,28 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = { code: string; signature: string; autoLaunch: boolean };
 
 export default function ReferralLanding({ code, signature, autoLaunch }: Props) {
   const [attempted, setAttempted] = useState(false);
 
-  const { appUrl, fallbackUrl } = useMemo(() => {
+  function openApp() {
     const query = new URLSearchParams();
     if (code) query.set("ref", code);
     if (signature) query.set("sig", signature);
 
-    const base = typeof window !== "undefined" ? window.location.origin : "";
-    const fallback = `${base}/r?${query.toString()}&launch=0`;
+    const fallback = `${window.location.origin}/r?${query.toString()}&launch=0`;
     const intent = `intent://referral?${query.toString()}#Intent;scheme=eurocars;package=com.eurocars.euro_cars;S.browser_fallback_url=${encodeURIComponent(fallback)};end`;
-
-    return { appUrl: intent, fallbackUrl: fallback };
-  }, [code, signature]);
+    window.location.href = intent;
+    setAttempted(true);
+  }
 
   useEffect(() => {
     if (!autoLaunch || !code || attempted) return;
-    const timer = window.setTimeout(() => {
-      window.location.href = appUrl;
-      setAttempted(true);
-    }, 450);
+    const timer = window.setTimeout(openApp, 450);
     return () => window.clearTimeout(timer);
-  }, [appUrl, attempted, autoLaunch, code]);
+  }, [autoLaunch, attempted, code, signature]);
 
   return (
     <main className="page">
@@ -58,7 +54,14 @@ export default function ReferralLanding({ code, signature, autoLaunch }: Props) 
           </div>
         ) : null}
 
-        <a className="open-button" href={appUrl}>
+        <a
+          className="open-button"
+          href="#open-app"
+          onClick={(event) => {
+            event.preventDefault();
+            openApp();
+          }}
+        >
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
             <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
           </svg>
