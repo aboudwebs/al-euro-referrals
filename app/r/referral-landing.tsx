@@ -32,7 +32,7 @@ export default function ReferralLanding({ code, signature, autoLaunch }: Props) 
       <section className="invite-card">
         <div className="app-icon">
           <img
-            src="https://raw.githubusercontent.com/aboudwebs/Euro-car.syria/main/branding/icon_1024.png"
+            src="/euro-icon.png"
             alt="EURO CARS"
             width={96}
             height={96}
